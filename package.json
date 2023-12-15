@@ -23,7 +23,8 @@
     "url": "https://olmsted.io"
   },
   "scripts": {
-    "build": "tsc --module nodenext"
+    "build": "tsc --module nodenext",
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
