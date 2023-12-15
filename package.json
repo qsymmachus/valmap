@@ -24,7 +24,8 @@
   },
   "scripts": {
     "build": "tsc --module nodenext",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "postversion": "git push --follow-tags"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
