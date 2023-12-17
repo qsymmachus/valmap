@@ -72,4 +72,82 @@ describe("ValueMap", () => {
       });
     });
   });
+
+  describe("delete", () => {
+    Object.entries(testCases).forEach(test => {
+      const keyType = test[0];
+      const fixtures = test[1];
+
+      describe(`with ${keyType} keys`, () => {
+        it("deletes the values stored at the key", () => {
+          map.set(fixtures.key, 1);
+          expect(map.has(fixtures.key)).toEqual(true);
+  
+          map.delete(fixtures.key);
+          expect(map.has(fixtures.key)).toEqual(false);
+          expect(map.get(fixtures.key)).toEqual(undefined);
+        })
+      });
+    });
+  });
+
+  describe("forEach", () => {
+    Object.entries(testCases).forEach(test => {
+      const keyType = test[0];
+      const fixtures = test[1];
+
+      describe(`with ${keyType} keys`, () => {
+        it('applies the callback function to each key and value', () => {
+          const value = 1;
+          const callback = {
+            fn: (_key: unknown, _value: unknown) => {
+              return;
+            },
+          };
+          const callbackSpy = jest.spyOn(callback, 'fn');
+  
+          map.set(fixtures.key, value);
+          map.forEach(callback.fn)
+  
+          expect(callbackSpy).toHaveBeenCalledWith(value, fixtures.key, map);
+        });
+      });
+    });
+  });
+
+  describe("keys", () => {
+    Object.entries(testCases).forEach(test => {
+      const keyType = test[0];
+      const fixtures = test[1];
+
+      describe(`with ${keyType} keys`, () => {
+        it('returns all the keys in the map', () => {
+          map.set(fixtures.key, 1);
+
+          const expectedKeys = [fixtures.key];
+          const actualKeys = [...map.keys()];
+
+          expect(actualKeys).toEqual(expectedKeys);
+        })
+      });
+    });
+  });
+
+  describe("entries", () => {
+    Object.entries(testCases).forEach(test => {
+      const keyType = test[0];
+      const fixtures = test[1];
+
+      describe(`with ${keyType} keys`, () => {
+        it('returns all the entries in the map', () => {
+          map.set(fixtures.key, 1);
+
+          const expectedEntries = [[fixtures.key, 1]];
+          const actualEntries = [...map.entries()];
+
+          expect(actualEntries).toEqual(expectedEntries);
+        });
+      });
+    });
+  });
 });
