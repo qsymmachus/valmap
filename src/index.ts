@@ -1,5 +1,12 @@
 import stringify from "fast-json-stable-stringify";
 
+/**
+ * An extension of the `Map` type that changes how object and array keys are handled.
+ * 
+ * In a `ValueMap`, object and array keys are considered equal if they have the same
+ * value, unlike ordinary an ordinary `Map` where they would only be considered equal
+ * if they shared the same reference.
+ */
 export class ValueMap<K, V> extends Map<K | string, V> {
   override get(key: K): V | undefined {
     return super.get(serializeKey(key));
