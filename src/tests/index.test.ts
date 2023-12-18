@@ -18,6 +18,7 @@ describe("ValueMap", () => {
         nested: {
           boolean: true,
         },
+        date: new Date('2023-01-01'),
       },
       sameValueKey: {
         neat: "cool",
@@ -25,6 +26,7 @@ describe("ValueMap", () => {
         nested: {
           boolean: true,
         },
+        date: new Date('2023-01-01'),
       },
     },
     array: {
