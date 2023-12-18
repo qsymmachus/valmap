@@ -1,4 +1,4 @@
-import stringify from "fast-json-stable-stringify";
+import stringify from "json-stable-stringify";
 
 /**
  * An extension of the `Map` type that changes how object and array keys are handled.
@@ -60,5 +60,17 @@ function serializeKey<K>(key: K): string {
 
 /** Deserializes a `key` string back to its original value. */
 function deserializeKey<K>(key: string): K {
-  return JSON.parse(key) as K;
+  return JSON.parse(key, reviveDates) as K;
+}
+
+/** Regex for the ISO-8601 date string serialized from a `Date`. */
+const ISO_8601 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+/** Allows JSON-serialized `Date`s to be revived as `Date`s. */
+function reviveDates(_key: any, value: any): Date | any {
+  if(typeof value === "string" && ISO_8601.test(value)) {
+    return new Date(value);
+  }
+
+  return value;
 }
