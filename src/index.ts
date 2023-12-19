@@ -8,11 +8,26 @@ import stringify from "json-stable-stringify";
  * shared the same reference.
  */
 export class ValueMap<K, V> extends Map<K | string, V> {
+  /** Duplicate the original keys in a separate map so they can revived. */
+  private readonly originalKeys: Map<string, K>
+
+  constructor(entries?: readonly (readonly [K, V])[] | null) {
+    super(entries);
+    this.originalKeys = new Map();
+
+    if (entries) {
+      entries.forEach(([key, _]) => {
+        this.setOriginalKey(key);
+      })
+    }
+  }
+
   override get(key: K): V | undefined {
     return super.get(serializeKey(key));
   }
 
   override set(key: K, value: V): this {
+    this.setOriginalKey(key);
     return super.set(serializeKey(key), value);
   }
 
@@ -21,7 +36,13 @@ export class ValueMap<K, V> extends Map<K | string, V> {
   }
 
   override delete(key: K): boolean {
+    this.deleteOriginalKey(key);
     return super.delete(serializeKey(key));
+  }
+
+  override clear(): void {
+    this.originalKeys.clear();
+    return super.clear();
   }
 
   override forEach(
@@ -29,48 +50,38 @@ export class ValueMap<K, V> extends Map<K | string, V> {
     thisArg?: any
   ): void {
     super.forEach((value: V, key: string | K, map: Map<string | K, V>) => {
-      callbackfn(value, deserializeKey<K>(key as string), map as Map<K, V>);
+      callbackfn(value, this.getOriginalKey(key as string)!, map as Map<K, V>);
     }, thisArg);
   }
 
   override keys(): IterableIterator<K> {
-    const serializedKeys = [...super.keys()] as string[];
-    const deserializedKeys = serializedKeys.map((key) =>
-      deserializeKey<K>(key)
-    );
-
-    return deserializedKeys[Symbol.iterator]();
+    return this.originalKeys.values();
   }
 
   override entries(): IterableIterator<[K, V]> {
     const serializedEntries = [...super.entries()] as [string, V][];
     const deserializedEntries = serializedEntries.map((entry) => [
-      deserializeKey<K>(entry[0]),
+      this.getOriginalKey(entry[0]),
       entry[1],
     ]);
 
     return deserializedEntries[Symbol.iterator]() as IterableIterator<[K, V]>;
+  }
+
+  private getOriginalKey(serializedKey: string): K | undefined {
+    return this.originalKeys.get(serializedKey);
+  }
+
+  private setOriginalKey(key: K): void {
+    this.originalKeys.set(serializeKey(key), key);
+  }
+
+  private deleteOriginalKey(key: K): void {
+    this.originalKeys.delete(serializeKey(key));
   }
 }
 
 /** Serializes a `key` into a stable representation so we can key anything by value. */
 function serializeKey<K>(key: K): string {
   return stringify(key);
-}
-
-/** Deserializes a `key` string back to its original value. */
-function deserializeKey<K>(key: string): K {
-  return JSON.parse(key, reviveDates) as K;
-}
-
-/** Regex for the ISO-8601 date string serialized from a `Date`. */
-const ISO_8601 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-
-/** Allows JSON-serialized `Date`s to be revived as `Date`s. */
-function reviveDates(_key: any, value: any): Date | any {
-  if(typeof value === "string" && ISO_8601.test(value)) {
-    return new Date(value);
-  }
-
-  return value;
 }

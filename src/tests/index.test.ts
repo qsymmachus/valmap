@@ -93,6 +93,24 @@ describe("ValueMap", () => {
     });
   });
 
+  describe("lear", () => {
+    Object.entries(testCases).forEach(test => {
+      const keyType = test[0];
+      const fixtures = test[1];
+
+      describe(`with ${keyType} keys`, () => {
+        it("clears all data from the map", () => {
+          map.set(fixtures.key, 1);
+          expect(map.has(fixtures.key)).toEqual(true);
+  
+          map.clear();
+          expect(map.has(fixtures.key)).toEqual(false);
+          expect(map.get(fixtures.key)).toEqual(undefined);
+        })
+      });
+    });
+  });
+
   describe("forEach", () => {
     Object.entries(testCases).forEach(test => {
       const keyType = test[0];
