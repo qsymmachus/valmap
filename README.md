@@ -7,6 +7,8 @@
 A `ValueMap` has the same interface as ordinary an `Map`:
 
 ```typescript
+import { ValueMap } from 'valmap';
+
 const valueMap = new ValueMap();
 
 valueMap.set('wow', 'neat');
@@ -29,4 +31,30 @@ const ordinaryMap = new Map();
 
 ordinaryMap.set({ foo: 'bar' }, 'object key in ordinary map');
 ordinaryMap.get({ foo: 'bar' }); // => undefined
+```
+
+## Installation
+
+Depending on your preferred package manager:
+
+```
+npm install valmap
+```
+
+```
+yarn add valmap
+```
+
+## Development
+
+To run all unit tests (assuming you're building with `yarn`):
+
+```
+yarn test
+```
+
+Publish a new version:
+
+```
+yarn publish
 ```
