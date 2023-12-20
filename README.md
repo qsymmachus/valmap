@@ -44,17 +44,3 @@ npm install valmap
 ```
 yarn add valmap
 ```
-
-## Development
-
-To run all unit tests (assuming you're building with `yarn`):
-
-```
-yarn test
-```
-
-Publish a new version:
-
-```
-yarn publish
-```
