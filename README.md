@@ -1,4 +1,4 @@
-# value-map
+# valmap
 
 `ValueMap` is a drop-in replacement for `Map` that considers object and array keys equal if they have the same value.
 
