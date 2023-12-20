@@ -83,5 +83,14 @@ export class ValueMap<K, V> extends Map<K | string, V> {
 
 /** Serializes a `key` into a stable representation so we can key anything by value. */
 function serializeKey<K>(key: K): string {
-  return stringify(key);
+  return stringify(key, { replacer: mapReplacer});
+}
+
+/** Custom replacer to ensure serialized `Map`s are differentiated by their contents. */
+function mapReplacer(_key: string, value: any): any {
+  if (value instanceof Map) {
+    return [...value.entries()];
+  }
+
+  return value;
 }

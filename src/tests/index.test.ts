@@ -170,4 +170,18 @@ describe("ValueMap", () => {
       });
     });
   });
+
+  describe("using maps as keys", () => {
+    it("only considers maps used as keys equal if they contain the same data", () => {
+      const valMap = new ValueMap<Map<string, string>, number>();
+
+      const map = new Map([['same', 'data']]);
+      const identicalMap = new Map([['same', 'data']]);
+      const differentMap = new Map([['different', 'data']]);
+      
+      valMap.set(map, 1);
+      expect(valMap.get(identicalMap)).toEqual(1);
+      expect(valMap.get(differentMap)).toEqual(undefined);
+    });
+  });
 });
