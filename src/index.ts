@@ -1,4 +1,4 @@
-import stringify from "json-stable-stringify";
+import hash from "object-hash";
 
 /**
  * An extension of the `Map` type that changes how object and array keys are handled.
@@ -81,16 +81,7 @@ export class ValueMap<K, V> extends Map<K | string, V> {
   }
 }
 
-/** Serializes a `key` into a stable representation so we can key anything by value. */
+/** Hashes a `key` into a stable representation so we can key anything by value. */
 function serializeKey<K>(key: K): string {
-  return stringify(key, { replacer: mapReplacer});
-}
-
-/** Custom replacer to ensure serialized `Map`s are differentiated by their contents. */
-function mapReplacer(_key: string, value: any): any {
-  if (value instanceof Map) {
-    return [...value.entries()];
-  }
-
-  return value;
+  return hash(key!);
 }
